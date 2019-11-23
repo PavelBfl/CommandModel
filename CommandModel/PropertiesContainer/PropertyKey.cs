@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace CommandModel
+namespace CommandModel.PropertiesContainer
 {
 	public class PropertyKey : IEquatable<PropertyKey>
 	{
-		public PropertyKey(string name, Type ownerType)
-			: this(name, ownerType, null)
+		public static PropertyKey Registry<TOwner>(string name, object? initValue = null)
 		{
-			
+			return new PropertyKey(name, typeof(TOwner), initValue);
 		}
-		public PropertyKey(string name, Type ownerType, object? initValue)
+
+		private PropertyKey(string name, Type ownerType, object? initValue)
 		{
 			Name = name;
 			OwnerType = ownerType;

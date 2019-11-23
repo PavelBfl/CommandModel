@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommandModel.Exceptions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -16,7 +17,7 @@ namespace CommandModel
 	{
 		public CommandDispatcher(IOffsetTokenDispatcher offsetTokenDispatcher)
 		{
-			OffsetTokenDispatcher = offsetTokenDispatcher;
+			OffsetTokenDispatcher = offsetTokenDispatcher ?? throw new NullReferenceException(nameof(offsetTokenDispatcher));
 		}
 
 		/// <summary>
@@ -29,6 +30,25 @@ namespace CommandModel
 		private readonly Stack<TokenCommand> undoCommands = new Stack<TokenCommand>();
 
 		/// <summary>
+		/// Диспетчер имеет текущий токен сдвига
+		/// </summary>
+		private bool CurrentTokenExists => commands.Any();
+		/// <summary>
+		/// Текущий токен сдвига
+		/// </summary>
+		private IComparable CurrentTokent
+		{
+			get
+			{
+				if (!CurrentTokenExists)
+				{
+					throw new Exception();
+				}
+				return commands.Last().OffsetToken;
+			}
+		}
+
+		/// <summary>
 		/// Диспетчер токенов сдвига команд
 		/// </summary>
 		public IOffsetTokenDispatcher OffsetTokenDispatcher { get; } = default!;
@@ -37,26 +57,29 @@ namespace CommandModel
 		/// Сдвинуть команды до указаного токена
 		/// </summary>
 		/// <param name="token">Токен до которого необходимо сдвинуть команды</param>
-		public void Offset(object token)
+		public void Offset(IComparable token)
 		{
-			switch (OffsetTokenDispatcher.Vector(token))
+			if (CurrentTokenExists)
 			{
-				case TokenVector.Direct: Offset(token, TokenVector.Direct, undoCommands, commands); break;
-				case TokenVector.Revert: Offset(token, TokenVector.Revert, commands, undoCommands); break;
-				default: throw new InvalidEnumArgumentException();
+				var compareResult = token.CompareTo(CurrentTokent);
+				if (compareResult > 0)
+				{
+					Offset(token, command => command.Execute(), undoCommands, commands);
+				}
+				else if (compareResult < 0)
+				{
+					Offset(token, command => command.Undo(), commands, undoCommands);
+				}
 			}
 		}
-		private void Offset(object token, TokenVector tokenVector, Stack<TokenCommand> giver, Stack<TokenCommand> taker)
+		private void Offset(object token, Action<Command> commandExecutor, Stack<TokenCommand> giver, Stack<TokenCommand> taker)
 		{
 			while (giver.Any())
 			{
 				var tokenCommand = giver.Pop();
-				switch (tokenVector)
-				{
-					case TokenVector.Direct: tokenCommand.Command.Execute(); break;
-					case TokenVector.Revert: tokenCommand.Command.Undo(); break;
-					default: throw new InvalidEnumArgumentException();
-				}
+
+				commandExecutor(tokenCommand.Command);
+
 				taker.Push(tokenCommand);
 				if (tokenCommand.OffsetToken.Equals(token))
 				{
@@ -81,19 +104,24 @@ namespace CommandModel
 		public void Add(Command command)
 		{
 			undoCommands.Clear();
-			commands.Push(new TokenCommand(command, OffsetTokenDispatcher.CreateToken()));
+			var token = OffsetTokenDispatcher.CreateToken();
+			if (CurrentTokenExists && token.CompareTo(CurrentTokent) <= 0)
+			{
+				throw new OffsetTokenLessCurrentExeption();
+			}
+			commands.Push(new TokenCommand(command, token));
 		}
 
 		private struct TokenCommand
 		{
-			public TokenCommand(Command command, object offsetToken)
+			public TokenCommand(Command command, IComparable offsetToken)
 			{
 				Command = command;
 				OffsetToken = offsetToken;
 			}
 
 			public Command Command { get; set; }
-			public object OffsetToken { get; set; }
+			public IComparable OffsetToken { get; set; }
 		}
 	}
 }

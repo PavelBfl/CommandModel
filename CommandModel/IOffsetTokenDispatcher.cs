@@ -6,15 +6,8 @@ using System.Threading.Tasks;
 
 namespace CommandModel
 {
-	public enum TokenVector
-	{
-		None,
-		Direct,
-		Revert,
-	}
 	public interface IOffsetTokenDispatcher
 	{
-		TokenVector Vector(object token);
-		object CreateToken();
+		IComparable CreateToken();
 	}
 }
