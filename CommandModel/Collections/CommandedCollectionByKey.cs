@@ -15,7 +15,7 @@ namespace CommandModel.Collections
 
 		public TValue this[TKey key]
 		{
-			get => throw new NotImplementedException();
+			get => GetValue(key);
 			set
 			{
 				if (CommandRecording)
@@ -28,6 +28,7 @@ namespace CommandModel.Collections
 				}
 			}
 		}
+		protected abstract TValue GetValue(TKey key);
 		protected abstract void UpdateForce(TKey key, TValue value);
 
 		public void Insert(TKey key, TValue value)

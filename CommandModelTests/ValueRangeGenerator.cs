@@ -19,7 +19,7 @@ namespace CommandModelTests
 		private ValueRangeGenerator(Random random, Range<T>? range)
 			: base(random)
 		{
-
+			Range = range;
 		}
 
 		public Range<T>? Range { get; } = null;

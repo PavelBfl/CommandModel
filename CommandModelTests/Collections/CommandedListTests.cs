@@ -102,19 +102,74 @@ namespace CommandModel.Collections.Tests
 		[TestMethod()]
 		public void AddTest()
 		{
-			
+			var random = new Random(RANDOM_KEY);
+			AddTest(TESTS_COUNT, CreateCountGenerator(random), new Int32Generator(random));
+		}
+		private void AddTest<T>(int testsCount, IValueGenerator<int> countGenerator, IValueGenerator<T> valueGenerator)
+		{
+			for (int iTest = 0; iTest < testsCount; iTest++)
+			{
+				var originalList = new List<T>();
+				var testList = new CommandedList<T>(CreateCommandDispatcher());
+
+				var count = countGenerator.Generate();
+				for (int i = 0; i < count; i++)
+				{
+					var value = valueGenerator.Generate();
+					originalList.Add(value);
+					testList.Add(value);
+					Assert.IsTrue(originalList.SequenceEqual(testList));
+				}
+			}
 		}
 
 		[TestMethod()]
 		public void ClearTest()
 		{
-			
+			var random = new Random(RANDOM_KEY);
+			ClearTest(TESTS_COUNT, CreateCountGenerator(random), new Int32Generator(random));
+		}
+		private void ClearTest<T>(int testsCount, IValueGenerator<int> countGenerator, IValueGenerator<T> valueGenerator)
+		{
+			for (int iTest = 0; iTest < testsCount; iTest++)
+			{
+				var testList = new CommandedList<T>(CreateCommandDispatcher());
+				var count = countGenerator.Generate();
+				for (int i = 0; i < count; i++)
+				{
+					testList.Add(valueGenerator.Generate());
+				}
+				testList.Clear();
+
+				Assert.IsFalse(testList.Any());
+			}
 		}
 
 		[TestMethod()]
 		public void ContainsTest()
 		{
-			
+			var random = new Random(RANDOM_KEY);
+			ContainsTest(TESTS_COUNT, CreateCountGenerator(random), new Int32Generator(random));
+		}
+		private void ContainsTest<T>(int testsCount, IValueGenerator<int> countGenerator, IValueGenerator<T> valueGenerator)
+		{
+			for (int iTest = 0; iTest < testsCount; iTest++)
+			{
+				var originalList = CreateOriginalList(countGenerator, valueGenerator);
+				var testList = CreateTestListByOriginal(originalList);
+
+				foreach (var item in originalList)
+				{
+					Assert.IsTrue(originalList.Contains(item) == testList.Contains(item));
+				}
+
+				var count = countGenerator.Generate();
+				for (int i = 0; i < count; i++)
+				{
+					var value = valueGenerator.Generate();
+					Assert.IsTrue(originalList.Contains(value) == testList.Contains(value));
+				}
+			}
 		}
 
 		[TestMethod()]

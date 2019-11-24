@@ -21,6 +21,11 @@ namespace CommandModel.Collections
 
 		public bool IsReadOnly => ((IList<T>)items).IsReadOnly;
 
+		protected override T GetValue(int key)
+		{
+			return items[key];
+		}
+
 		protected override void UpdateForce(int key, T value)
 		{
 			items[key] = value;

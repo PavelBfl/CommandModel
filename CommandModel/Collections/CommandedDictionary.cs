@@ -25,6 +25,11 @@ namespace CommandModel.Collections
 
 		public bool IsReadOnly => ((IDictionary<TKey, TValue>)items).IsReadOnly;
 
+		protected override TValue GetValue(TKey key)
+		{
+			return items[key];
+		}
+
 		protected override void UpdateForce(TKey key, TValue value)
 		{
 			items[key] = value;
