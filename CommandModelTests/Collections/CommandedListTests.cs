@@ -173,21 +173,25 @@ namespace CommandModel.Collections.Tests
 		}
 
 		[TestMethod()]
-		public void CopyToTest()
-		{
-			
-		}
-
-		[TestMethod()]
 		public void RemoveTest()
 		{
-			
+			var random = new Random(RANDOM_KEY);
+			RemoveTest(TESTS_COUNT, CreateCountGenerator(random), new Int32Generator(random));
 		}
-
-		[TestMethod()]
-		public void GetEnumeratorTest()
+		private void RemoveTest<T>(int testsCount, IValueGenerator<int> countGenerator, IValueGenerator<T> valueGenerator)
 		{
-			
+			for (int iTest = 0; iTest < testsCount; iTest++)
+			{
+				var originalList = CreateOriginalList(countGenerator, valueGenerator);
+				var testList = CreateTestListByOriginal(originalList);
+
+				foreach (var item in originalList.ToArray())
+				{
+					originalList.Remove(item);
+					testList.Remove(item);
+					Assert.IsTrue(originalList.SequenceEqual(testList));
+				}
+			}
 		}
 	}
 }
