@@ -7,7 +7,10 @@ using System.Windows;
 
 namespace CommandModel
 {
-	public class CommandedObject : ICommandedObject
+	/// <summary>
+	/// Объект выполнения команд
+	/// </summary>
+	public class CommandedObject
 	{
 		private const string COMMAND_DISPATCHER_NULL_MESSAGE = "Диспетчер команд не может принимать значение null";
 
@@ -16,10 +19,14 @@ namespace CommandModel
 			CommandDispatcher = commandDispatcher ?? throw new NullReferenceException(COMMAND_DISPATCHER_NULL_MESSAGE);
 		}
 
+		/// <summary>
+		/// Диспетчер команд
+		/// </summary>
 		public CommandDispatcher CommandDispatcher { get; } = default!;
+		
 		public bool CommandRecording { get; private set; } = true;
 
-		public IDisposable Disable()
+		internal IDisposable Disable()
 		{
 			return new DisableCommandRecordingToken(this);
 		}

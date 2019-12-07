@@ -12,10 +12,9 @@ namespace CommandModel.Collections
 		Add,
 		Remove
 	}
-	class CollectionUniqueCommand<T> : CommandTarget<CommandedCollectionUnique<T>>
+	class CollectionUniqueCommand<T> : Command
 	{
-		public CollectionUniqueCommand(CommandedCollectionUnique<T> target, CollectionUniqueChanged action, T item)
-			: base(target)
+		public CollectionUniqueCommand(CollectionUniqueChanged action, T item)
 		{
 			Action = action;
 			Item = item;
@@ -23,31 +22,5 @@ namespace CommandModel.Collections
 
 		public CollectionUniqueChanged Action { get; } = (CollectionUniqueChanged)(-1);
 		public T Item { get; } = default!;
-
-		protected override void ExecuteForce()
-		{
-			using (Target.Disable())
-			{
-				switch (Action)
-				{
-					case CollectionUniqueChanged.Add: Target.Add(Item); break;
-					case CollectionUniqueChanged.Remove: Target.Remove(Item); break;
-					default: throw new InvalidEnumArgumentException();
-				} 
-			}
-		}
-
-		protected override void UndoForce()
-		{
-			using (Target.Disable())
-			{
-				switch (Action)
-				{
-					case CollectionUniqueChanged.Add: Target.Remove(Item); break;
-					case CollectionUniqueChanged.Remove: Target.Add(Item); break;
-					default: throw new InvalidEnumArgumentException();
-				} 
-			}
-		}
 	}
 }

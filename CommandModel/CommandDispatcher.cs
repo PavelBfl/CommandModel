@@ -72,13 +72,13 @@ namespace CommandModel
 				}
 			}
 		}
-		private void Offset(object token, Action<Command> commandExecutor, Stack<TokenCommand> giver, Stack<TokenCommand> taker)
+		private void Offset(object token, Action<CommandExecutor> commandExecutor, Stack<TokenCommand> giver, Stack<TokenCommand> taker)
 		{
 			while (giver.Any())
 			{
 				var tokenCommand = giver.Pop();
 
-				commandExecutor(tokenCommand.Command);
+				commandExecutor(tokenCommand.CommandExecutor);
 
 				taker.Push(tokenCommand);
 				if (tokenCommand.OffsetToken.Equals(token))
@@ -91,17 +91,17 @@ namespace CommandModel
 		/// <summary>
 		/// Добавить и выполнить команду
 		/// </summary>
-		/// <param name="command">Команда</param>
-		public void AddAndExecute(Command command)
+		/// <param name="commandExecutor">Команда</param>
+		public void AddAndExecute(CommandExecutor commandExecutor)
 		{
-			Add(command);
-			command.Execute();
+			Add(commandExecutor);
+			commandExecutor.Execute();
 		}
 		/// <summary>
 		/// Добавить команду
 		/// </summary>
 		/// <param name="command">Команда</param>
-		public void Add(Command command)
+		public void Add(CommandExecutor commandExecutor)
 		{
 			undoCommands.Clear();
 			var token = OffsetTokenDispatcher.CreateToken();
@@ -109,18 +109,18 @@ namespace CommandModel
 			{
 				throw new OffsetTokenLessCurrentExeption();
 			}
-			commands.Push(new TokenCommand(command, token));
+			commands.Push(new TokenCommand(commandExecutor, token));
 		}
 
 		private struct TokenCommand
 		{
-			public TokenCommand(Command command, IComparable offsetToken)
+			public TokenCommand(CommandExecutor commandExecutor, IComparable offsetToken)
 			{
-				Command = command;
+				CommandExecutor = commandExecutor;
 				OffsetToken = offsetToken;
 			}
 
-			public Command Command { get; set; }
+			public CommandExecutor CommandExecutor { get; set; }
 			public IComparable OffsetToken { get; set; }
 		}
 	}

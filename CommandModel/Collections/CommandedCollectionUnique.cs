@@ -24,7 +24,7 @@ namespace CommandModel.Collections
 		{
 			if (CommandRecording)
 			{
-				CommandDispatcher.AddAndExecute(new CollectionUniqueCommand<T>(this, CollectionUniqueChanged.Add, item));
+				CommandDispatcher.AddAndExecute(new CollectionUniqueExecutor<T>(this, new CollectionUniqueCommand<T>(CollectionUniqueChanged.Add, item)));
 			}
 			else
 			{
@@ -58,7 +58,7 @@ namespace CommandModel.Collections
 		{
 			if (CommandRecording)
 			{
-				CommandDispatcher.AddAndExecute(new CollectionUniqueCommand<T>(this, CollectionUniqueChanged.Remove, item));
+				CommandDispatcher.AddAndExecute(new CollectionUniqueExecutor<T>(this, new CollectionUniqueCommand<T>(CollectionUniqueChanged.Remove, item)));
 				return true;
 			}
 			else

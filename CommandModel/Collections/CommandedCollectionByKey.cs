@@ -20,7 +20,7 @@ namespace CommandModel.Collections
 			{
 				if (CommandRecording)
 				{
-					CommandDispatcher.AddAndExecute(CollectionByKeyCommand<TKey, TValue>.Update(this, key, value));
+					CommandDispatcher.AddAndExecute(CollectionByKeyExecutor<TKey, TValue>.Update(this, key, value));
 				}
 				else
 				{
@@ -35,7 +35,7 @@ namespace CommandModel.Collections
 		{
 			if (CommandRecording)
 			{
-				CommandDispatcher.AddAndExecute(CollectionByKeyCommand<TKey, TValue>.Insert(this, key, value));
+				CommandDispatcher.AddAndExecute(CollectionByKeyExecutor<TKey, TValue>.Insert(this, key, value));
 			}
 			else
 			{
@@ -48,7 +48,7 @@ namespace CommandModel.Collections
 		{
 			if (CommandRecording)
 			{
-				CommandDispatcher.AddAndExecute(CollectionByKeyCommand<TKey, TValue>.Remove(this, key));
+				CommandDispatcher.AddAndExecute(CollectionByKeyExecutor<TKey, TValue>.Remove(this, key));
 			}
 			else
 			{
