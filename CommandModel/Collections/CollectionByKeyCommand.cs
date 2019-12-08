@@ -15,17 +15,15 @@ namespace CommandModel.Collections
 	}
 	class CollectionByKeyCommand<TKey, TValue> : Command
 	{
-		public CollectionByKeyCommand(CollectionByKeyChanged action, TKey key, TValue oldValue, TValue newValue)
+		public CollectionByKeyCommand(CollectionByKeyChanged action, TKey key, TValue newValue)
 		{
 			Action = action;
 			Key = key;
-			OldValue = oldValue;
 			NewValue = newValue;
 		}
 
 		public CollectionByKeyChanged Action { get; } = (CollectionByKeyChanged)(-1);
 		public TKey Key { get; } = default!;
-		public TValue OldValue { get; } = default!;
 		public TValue NewValue { get; } = default!;
 	}
 }
