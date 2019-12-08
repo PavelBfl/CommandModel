@@ -4,6 +4,10 @@ using System.Text;
 
 namespace CommandModel
 {
+	/// <summary>
+	/// Объект скалярного значения
+	/// </summary>
+	/// <typeparam name="T">Тип значения</typeparam>
 	public class CommandedValue<T> : CommandedObject
 	{
 		public CommandedValue(CommandDispatcher commandDispatcher)
@@ -16,6 +20,9 @@ namespace CommandModel
 			Value = initValue;
 		}
 
+		/// <summary>
+		/// Текущее значение
+		/// </summary>
 		public T Value
 		{
 			get => value;
