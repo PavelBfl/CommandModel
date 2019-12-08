@@ -23,12 +23,25 @@ namespace CommandModel
 		/// Диспетчер команд
 		/// </summary>
 		public CommandDispatcher CommandDispatcher { get; } = default!;
-		
+		/// <summary>
+		/// Флаг записи действий объекта в общий стек комманд
+		/// </summary>
 		public bool CommandRecording { get; private set; } = true;
-
+		/// <summary>
+		/// Отключить запись действий в стек команд
+		/// </summary>
+		/// <returns>Дескриптор востановления записи действий</returns>
 		internal IDisposable Disable()
 		{
 			return new DisableCommandRecordingToken(this);
+		}
+		/// <summary>
+		/// Выполнить команду
+		/// </summary>
+		/// <param name="commandExecutor">Объект выполнения команд</param>
+		protected void Execute(CommandExecutor commandExecutor)
+		{
+			CommandDispatcher.AddAndExecute(commandExecutor);
 		}
 
 		private class DisableCommandRecordingToken : IDisposable
