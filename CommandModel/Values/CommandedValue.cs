@@ -11,7 +11,7 @@ namespace CommandModel
 	public class CommandedValue<T> : CommandedObject
 	{
 		public CommandedValue(CommandDispatcher commandDispatcher)
-: base(commandDispatcher)
+			: base(commandDispatcher)
 		{
 		}
 		public CommandedValue(T initValue, CommandDispatcher commandDispatcher)
