@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ValueGenerator.DoubleGenerator
+namespace ValueGenerator.DoubleGenerators
 {
 	public class DoubleUniqueGenerator : ValueUniqueGenerator<double>
 	{
